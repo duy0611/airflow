@@ -37,7 +37,7 @@ passing = KubernetesPodOperator(namespace='default',
                           )
 
 failing = KubernetesPodOperator(namespace='default',
-                          image="ubuntu:1604",
+                          image="ubuntu:16.04",
                           cmds=["Python", "-c"],
                           arguments=["print('hello world')"],
                           labels={"foo": "bar"},
@@ -47,5 +47,18 @@ failing = KubernetesPodOperator(namespace='default',
                           dag=dag
                           )
 
+another_passing = KubernetesPodOperator(
+        namespace='default',
+        image="ubuntu:16.04",
+        cmds=["bash", "-cx"],
+        arguments=["echo", "10"],
+        labels={"foo": "bar"},
+        name="another-passing",
+        task_id="another-passing",
+        get_logs=True,
+        dag=dag
+)
+
 passing.set_upstream(start)
 failing.set_upstream(start)
+another-passing.set_upstream(start)
