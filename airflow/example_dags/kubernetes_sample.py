@@ -33,6 +33,7 @@ passing = KubernetesPodOperator(namespace='default',
                           name="passing-test",
                           task_id="passing-task",
                           get_logs=True,
+                          in_cluster=True,
                           dag=dag
                           )
 
@@ -44,6 +45,7 @@ failing = KubernetesPodOperator(namespace='default',
                           name="fail",
                           task_id="failing-task",
                           get_logs=True,
+                          in_cluster=True,
                           dag=dag
                           )
 
@@ -56,6 +58,7 @@ another_passing = KubernetesPodOperator(
         name="another-passing",
         task_id="another-passing",
         get_logs=True,
+        in_cluster=True,
         dag=dag
 )
 
