@@ -61,4 +61,4 @@ another_passing = KubernetesPodOperator(
 
 passing.set_upstream(start)
 failing.set_upstream(start)
-another-passing.set_upstream(start)
+another_passing.set_upstream(start)
