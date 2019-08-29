@@ -1,5 +1,7 @@
+import airflow
 from airflow import DAG
 from datetime import datetime, timedelta
+from airflow.contrib.operators import KubernetesOperator
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
 
@@ -7,7 +9,7 @@ from airflow.operators.dummy_operator import DummyOperator
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime.utcnow(),
+    'start_date': airflow.utils.dates.days_ago(1),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
@@ -16,14 +18,17 @@ default_args = {
 }
 
 dag = DAG(
-    'kubernetes_sample', default_args=default_args, schedule_interval=timedelta(minutes=10))
+    'kubernetes_sample', 
+    default_args=args,
+    schedule_interval='0 0 * * *',
+    dagrun_timeout=timedelta(minutes=60))
 
 
 start = DummyOperator(task_id='run_this_first', dag=dag)
 
 passing = KubernetesPodOperator(namespace='default',
                           image="Python:3.6",
-                          cmds=["Python","-c"],
+                          cmds=["Python", "-c"],
                           arguments=["print('hello world')"],
                           labels={"foo": "bar"},
                           name="passing-test",
@@ -34,7 +39,7 @@ passing = KubernetesPodOperator(namespace='default',
 
 failing = KubernetesPodOperator(namespace='default',
                           image="ubuntu:1604",
-                          cmds=["Python","-c"],
+                          cmds=["Python", "-c"],
                           arguments=["print('hello world')"],
                           labels={"foo": "bar"},
                           name="fail",
